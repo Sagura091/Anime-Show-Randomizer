@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Anime Randomizer</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function displayRandomizedList() {
+            var numRandomize = $('#num_randomize').val();
+            $('#randomized_list').empty();
+            $('#selected_item').text('');
+
+            $.ajax({
+                url: '/',
+                type: 'POST',
+                data: { num_randomize: numRandomize },
+                success: function(response) {
+                    var randomizedList = response.randomized_list;
+                    var selectedItem = response.selected_item;
+
+                    var i = 0;
+                    var interval = setInterval(function() {
+                        if (i < randomizedList.length) {
+                            $('#randomized_list').append('<li>' + randomizedList[i] + '</li>');
+                            i++;
+                        } else {
+                            clearInterval(interval);
+                            $('#selected_item').text(selectedItem);
+                        }
+                    }, 1000);  // Delay between displaying each item (in milliseconds)
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Anime Randomizer</h1>
+    <form onsubmit="event.preventDefault(); displayRandomizedList();">
+        <label for="num_randomize">Number of Randomizations:</label>
+        <input type="number" id="num_randomize" min="1" required>
+        <button type="submit">Select</button>
+    </form>
+    <br>
+    <h2>Randomized List:</h2>
+    <ul id="randomized_list"></ul>
+    <h2>Final Selected Item:</h2>
+    <p id="selected_item"></p>
+</body>
+</html>
